@@ -153,16 +153,16 @@ fig_pie.update_layout(font=dict(size=16), title_font=dict(size=22), legend=dict(
 st.plotly_chart(fig_pie, use_container_width=True)
 
 # ------------------- لیست اسامی -------------------
-# with st.expander("📋 لیست اسامی مشتریان در هر دسته"):
-  #  lists_by_bucket = (tx_per_customer.sort_values(["bucket", CUSTOMER_COL])
-   #                    .groupby(["bucket","bucket_label"])[CUSTOMER_COL]
-    #                   .apply(list).reset_index(name="customers"))
-   # lists_by_bucket["count"] = lists_by_bucket["customers"].apply(len)
-   # st.dataframe(lists_by_bucket[["bucket_label","count"]], use_container_width=True)
-   # for b in order:
-   #     row = lists_by_bucket[lists_by_bucket["bucket"] == b]
-   #     if row.empty:
-   #         st.write(f"— دسته {label_map[b]}: موردی ندارد —")
-   #         continue
-   #     st.markdown(f"**مشتریان ({label_map[b]}) — {len(row['customers'].iloc[0])} نفر**")
-   #     st.write(pd.DataFrame(row["customers"].iloc[0], columns=["نام مشتری"]))
+ with st.expander("📋 لیست اسامی مشتریان در هر دسته"):
+    lists_by_bucket = (tx_per_customer.sort_values(["bucket", CUSTOMER_COL])
+                       .groupby(["bucket","bucket_label"])[CUSTOMER_COL]
+                       .apply(list).reset_index(name="customers"))
+    lists_by_bucket["count"] = lists_by_bucket["customers"].apply(len)
+    st.dataframe(lists_by_bucket[["bucket_label","count"]], use_container_width=True)
+    for b in order:
+        row = lists_by_bucket[lists_by_bucket["bucket"] == b]
+        if row.empty:
+            st.write(f"— دسته {label_map[b]}: موردی ندارد —")
+            continue
+        st.markdown(f"**مشتریان ({label_map[b]}) — {len(row['customers'].iloc[0])} نفر**")
+       st.write(pd.DataFrame(row["customers"].iloc[0], columns=["نام مشتری"]))
