@@ -113,39 +113,6 @@ fig_pie.update_layout(font=dict(size=16), title_font=dict(size=22), legend=dict(
 bar_html = fig_bar.to_html(full_html=False, include_plotlyjs="cdn")
 pie_html = fig_pie.to_html(full_html=False, include_plotlyjs=False)
 
-# جدول اسامی: اگر محرمانه است، این بلوک را حذف کن
-lists_by_bucket = (tx_per_customer.sort_values(["bucket", CUSTOMER_COL])
-                   .groupby(["bucket","bucket_label"])[CUSTOMER_COL]
-                   .apply(list).reset_index(name="customers"))
-lists_by_bucket["count"] = lists_by_bucket["customers"].apply(len)
-
-def list_to_html(names):
-    return "<br>".join([str(n) for n in names])
-
-table_rows = []
-for _, row in lists_by_bucket.iterrows():
-    table_rows.append(f"""
-      <tr>
-        <td>{row['bucket_label']}</td>
-        <td style="text-align:center;">{row['count']}</td>
-        <td>{list_to_html(row['customers'])}</td>
-      </tr>
-    """)
-table_html = f"""
-<table class="tbl">
-  <thead>
-    <tr>
-      <th>بازه خرید</th>
-      <th>تعداد مشتری</th>
-      <th>اسامی</th>
-    </tr>
-  </thead>
-  <tbody>
-    {''.join(table_rows)}
-  </tbody>
-</table>
-"""
-
 html = f"""
 <!doctype html>
 <html lang="fa" dir="rtl">
