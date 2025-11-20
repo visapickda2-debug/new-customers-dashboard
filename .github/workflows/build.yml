@@ -1,0 +1,39 @@
+name: Daily HTML to Google Drive
+
+on:
+  schedule:
+    - cron: "0 3 * * *"   # هر روز ساعت 03:00 UTC
+  workflow_dispatch:      # اجرای دستی از بخش Actions
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install gspread google-auth google-api-python-client pandas==2.2.2 plotly==5.24.1
+
+      - name: Generate HTML
+        env:
+          GOOGLE_SERVICE_ACCOUNT: ${{ secrets.GOOGLE_SERVICE_ACCOUNT }}
+          SHEET_ID: ${{ secrets.SHEET_ID }}
+          WORKSHEET_NAME: ${{ secrets.WORKSHEET_NAME }}
+          DATE_COL: ${{ secrets.DATE_COL }}
+          CUSTOMER_COL: ${{ secrets.CUSTOMER_COL }}
+          EXCLUDED_CUSTOMERS: ${{ secrets.EXCLUDED_CUSTOMERS }}
+        run: python generate_report.py
+
+      - name: Upload to Google Drive
+        env:
+          GOOGLE_SERVICE_ACCOUNT: ${{ secrets.GOOGLE_SERVICE_ACCOUNT }}
+          DRIVE_FILE_ID: ${{ secrets.DRIVE_FILE_ID }}
+        run: python upload_to_drive.py
